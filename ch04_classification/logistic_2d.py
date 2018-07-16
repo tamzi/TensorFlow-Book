@@ -23,7 +23,7 @@ Y = tf.placeholder(tf.float32, shape=(None,), name="y")
 w = tf.Variable([0., 0., 0.], name="w", trainable=True)
 
 y_model = tf.sigmoid(-(w[2] * X2 + w[1] * X1 + w[0]))
-cost = tf.reduce_mean(-tf.log(y_model * Y + (1 - y_model) * (1 - Y)))
+cost = tf.reduce_mean(-tf.log(y_model) * Y -tf.log(1 - y_model) * (1 - Y))
 train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
 
 with tf.Session() as sess:
