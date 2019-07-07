@@ -26,4 +26,4 @@ with tf.Session() as sess:
         print(raw_data[i], curr_avg)
         writer.add_summary(summary_str, i)
 
-
+writer.close()
