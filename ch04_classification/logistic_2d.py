@@ -36,7 +36,7 @@ with tf.Session() as sess:
             break
         prev_err = err
 
-    w_val = sess.run(w, {X1: x1s, X2: x2s, Y: ys})
+    w_val = sess.run(w)
 
 x1_boundary, x2_boundary = [], []
 for x1_test in np.linspace(0, 10, 100):
