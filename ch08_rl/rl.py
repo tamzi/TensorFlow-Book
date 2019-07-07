@@ -1,10 +1,13 @@
-from yahoo_finance import Share
 from matplotlib import pyplot as plt
 import numpy as np
 import random
 import tensorflow as tf
 import random
-
+import pandas as pd
+pd.core.common.is_list_like = pd.api.types.is_list_like
+from pandas_datareader import data
+import datetime
+import requests_cache
 
 class DecisionPolicy:
     def select_action(self, current_state, step):
@@ -43,7 +46,7 @@ class QLearningDecisionPolicy(DecisionPolicy):
         loss = tf.square(self.y - self.q)
         self.train_op = tf.train.AdagradOptimizer(0.01).minimize(loss)
         self.sess = tf.Session()
-        self.sess.run(tf.initialize_all_variables())
+        self.sess.run(tf.global_variables_initializer())
 
     def select_action(self, current_state, step):
         threshold = min(self.epsilon, step / 1000.)
@@ -108,17 +111,12 @@ def run_simulations(policy, budget, num_stocks, prices, hist):
     return avg, std
 
 
-def get_prices(share_symbol, start_date, end_date, cache_filename='stock_prices.npy'):
-    try:
-        stock_prices = np.load(cache_filename)
-    except IOError:
-        share = Share(share_symbol)
-        stock_hist = share.get_historical(start_date, end_date)
-        stock_prices = [stock_price['Open'] for stock_price in stock_hist]
-        np.save(cache_filename, stock_prices)
-
-    return stock_prices
-
+def get_prices(share_symbol, start_date, end_date):
+    expire_after = datetime.timedelta(days=3)
+    session = requests_cache.CachedSession(cache_name='cache', backend='sqlite', expire_after=expire_after)
+    stock_hist = data.DataReader(share_symbol, 'iex', start_date, end_date, session=session)               
+    open_prices = stock_hist['open']    
+    return open_prices.values.tolist()
 
 def plot_prices(prices):
     plt.title('Opening stock prices')
@@ -129,7 +127,7 @@ def plot_prices(prices):
 
 
 if __name__ == '__main__':
-    prices = get_prices('MSFT', '1992-07-22', '2016-07-22')
+    prices = get_prices('MSFT', '2013-07-22', '2018-07-22')
     plot_prices(prices)
     actions = ['Buy', 'Sell', 'Hold']
     hist = 200
