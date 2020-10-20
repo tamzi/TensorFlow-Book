@@ -2,8 +2,6 @@
 
 [This](https://github.com/BinRoot/TensorFlow-Book) is the official code repository for [Machine Learning with TensorFlow](http://www.tensorflowbook.com/).
 
-:warning: **Warning**: The book will be released in a month or two, so this repo is a **pre-release** of the entire code. I will be heavily updating this repo in the coming weeks. Stay tuned, and follow along! :)
-
 Get started with machine learning using TensorFlow, Google's latest and greatest machine learning library.
 
 # Summary
